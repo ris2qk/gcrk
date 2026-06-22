@@ -370,13 +370,15 @@ function ConsumerApp({ messages, input, setInput, loading, send, scrollRef, user
 }
 
 function renderRich(text) {
-  // Turn **bold** into real bold; leave the rest of the text as-is.
-  const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((p, i) =>
-    p.startsWith("**") && p.endsWith("**") && p.length > 4
-      ? <strong key={i}>{p.slice(2, -2)}</strong>
-      : <React.Fragment key={i}>{p}</React.Fragment>
-  );
+  // Turn **bold** into real bold and *italic* into real italics; leave the rest as-is.
+  const parts = String(text).split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  return parts.map((p, i) => {
+    if (p.startsWith("**") && p.endsWith("**") && p.length > 4)
+      return <strong key={i}>{p.slice(2, -2)}</strong>;
+    if (p.startsWith("*") && p.endsWith("*") && p.length > 2)
+      return <em key={i}>{p.slice(1, -1)}</em>;
+    return <React.Fragment key={i}>{p}</React.Fragment>;
+  });
 }
 
 function Bubble({ role, text }) {
