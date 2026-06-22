@@ -369,6 +369,16 @@ function ConsumerApp({ messages, input, setInput, loading, send, scrollRef, user
   );
 }
 
+function renderRich(text) {
+  // Turn **bold** into real bold; leave the rest of the text as-is.
+  const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((p, i) =>
+    p.startsWith("**") && p.endsWith("**") && p.length > 4
+      ? <strong key={i}>{p.slice(2, -2)}</strong>
+      : <React.Fragment key={i}>{p}</React.Fragment>
+  );
+}
+
 function Bubble({ role, text }) {
   const me = role === "user";
   return (
@@ -378,7 +388,7 @@ function Bubble({ role, text }) {
         background: me ? C.ink : C.paper, color: me ? "#fff" : C.text,
         border: me ? "none" : `1px solid ${C.line}`,
         borderBottomRightRadius: me ? 4 : 14, borderBottomLeftRadius: me ? 14 : 4 }}>
-        {text}
+        {renderRich(text)}
       </div>
     </div>
   );
